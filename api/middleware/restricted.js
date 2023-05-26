@@ -18,9 +18,10 @@ const restricted = (req, res, next) => {
 
 module.exports = restricted;
 
-// module.exports = { -- Noks why can't i export the middleware like this?
-//   restricted
-// }
+// module.exports = {
+// 	// -- Noks why can't i export the middleware like this?
+// 	restricted,
+// };
 
 // module.exports = (req, res, next) => {
 // 	next();
