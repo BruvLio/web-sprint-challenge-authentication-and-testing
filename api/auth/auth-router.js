@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const bcrypt = require('bcryptjs');
-const db = require('../../data/dbConfig');
+const Users = require('../../api/users/users-model');
 const jwt = require('jsonwebtoken');
 const {
 	checkUsernameExists,
@@ -9,20 +9,23 @@ const {
 
 router.post(
 	'/register',
-	checkUsernameExists,
 	checkUsernamePasswordProvided,
+	checkUsernameExists,
+	//eslint-disable-next-line
 	async (req, res, next) => {
 		let { password } = req.body;
-
-		res.end('implement register, please!');
-		/*
+		req.body.password = bcrypt.hashSync(password, 8);
+		let newUser = await Users.add(req.body);
+		res.status(200).json(newUser);
+	}
+	/*
     IMPLEMENT
     You are welcome to build additional middlewares to help with the endpoint's functionality.
     DO NOT EXCEED 2^8 ROUNDS OF HASHING!
 
     1- In order to register a new account the client must provide `username` and `password`:
       {
-        "username": "Captain Marvel", // must not exist already in the `users` table
+        "username": "Captain Marvel", // must not exist already in the `users` table - checkUsernameExists
         "password": "foobar"          // needs to be hashed before it's saved
       }
 
@@ -40,7 +43,6 @@ router.post(
     4- On FAILED registration due to the `username` being taken,
       the response body should include a string exactly as follows: "username taken".
   */
-	}
 );
 
 router.post('/login', (req, res) => {
@@ -70,16 +72,16 @@ router.post('/login', (req, res) => {
   */
 });
 
-function generateToken(user) {
-	const payload = {
-		subject: user.id,
-		username: user.username,
-	};
-	const options = {
-		expiresIn: '1d',
-	};
-	const secret = 'test';
-	return jwt.sign(payload, secret, options);
-}
+// function generateToken(user) {
+// 	const payload = {
+// 		subject: user.id,
+// 		username: user.username,
+// 	};
+// 	const options = {
+// 		expiresIn: '1d',
+// 	};
+// 	const secret = 'test';
+// 	return jwt.sign(payload, secret, options);
+// }
 
 module.exports = router;
