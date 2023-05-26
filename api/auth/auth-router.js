@@ -1,5 +1,7 @@
 const router = require('express').Router();
 const bcrypt = require('bcryptjs');
+const db = require('../../data/dbConfig');
+const jwt = require('jsonwebtoken');
 const {
 	checkUsernameExists,
 	checkUsernamePasswordProvided,
@@ -67,5 +69,17 @@ router.post('/login', (req, res) => {
       the response body should include a string exactly as follows: "invalid credentials".
   */
 });
+
+function generateToken(user) {
+	const payload = {
+		subject: user.id,
+		username: user.username,
+	};
+	const options = {
+		expiresIn: '1d',
+	};
+	const secret = 'test';
+	return jwt.sign(payload, secret, options);
+}
 
 module.exports = router;
