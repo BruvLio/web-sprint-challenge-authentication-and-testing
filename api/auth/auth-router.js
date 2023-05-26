@@ -51,12 +51,12 @@ router.post('/login', checkUsernamePasswordProvided, async (req, res, next) => {
 	let [user] = await Users.findBy({ username });
 	if (user && bcrypt.compareSync(password, user.password)) {
 		const token = buildToken(user);
-		res.json({
+		res.status(200).json({
 			message: `welcome, ${username}`,
 			token,
 		});
 	} else {
-		next();
+		next({ status: 404, message: 'invalid credentials' });
 	}
 });
 /*
